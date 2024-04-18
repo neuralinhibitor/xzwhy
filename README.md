@@ -174,4 +174,4 @@ kubectl delete -f xzwhy.yml
 
 * [teamnautilus](https://hub.docker.com/r/teamnautilus/xzbot) created a [server vulnerable to the exploit](https://hub.docker.com/r/teamnautilus/xzbot)
 * [amlweems](https://github.com/amlweems/xzbot.git) published an automated tool for exploiting vulnerable SSH endpoints
-* [patorjk](https://patorjk.com/software/taag/#p=testall&f=Graffiti&t=xzy) created an excellent text-to-ascii art generator
+* [patorjk](http://patorjk.com/) created an excellent [text-to-ascii art generator](https://patorjk.com/software/taag/#p)
